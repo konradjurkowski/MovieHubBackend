@@ -8,7 +8,7 @@ import com.konradjurkowski.moviehub_server.feature.user.repository.UserRepositor
 import com.konradjurkowski.moviehub_server.feature.auth.repository.UserSessionRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
-import java.time.LocalDateTime
+import java.time.Instant
 
 @Service
 class TokenService(
@@ -27,7 +27,7 @@ class TokenService(
             refreshToken = refreshToken,
             deviceInfo = clientInfo.deviceInfo,
             ipAddress = clientInfo.ipAddress,
-            expiresAt = LocalDateTime.now().plusSeconds(jwtProperties.refreshTokenExpiration / 1000),
+            expiresAt = Instant.now().plusMillis(jwtProperties.refreshTokenExpiration),
         )
 
         userSessionRepository.save(session)
@@ -37,7 +37,7 @@ class TokenService(
     fun refreshTokens(refreshToken: String): Pair<String, String>? {
         val session = userSessionRepository.findByRefreshToken(refreshToken) ?: return null
 
-        if (session.expiresAt.isBefore(LocalDateTime.now())) {
+        if (session.expiresAt.isBefore(Instant.now())) {
             userSessionRepository.deleteByRefreshToken(refreshToken)
             return null
         }
@@ -47,12 +47,10 @@ class TokenService(
         val newAccessToken = jwtService.generateAccessToken(user = user)
         val newRefreshToken = jwtService.generateRefreshToken()
 
-        val updatedSession = session.copy(
-            refreshToken = newRefreshToken,
-            lastUsedAt = LocalDateTime.now(),
-            expiresAt = LocalDateTime.now().plusSeconds(jwtProperties.refreshTokenExpiration / 1000),
-        )
-        userSessionRepository.save(updatedSession)
+        session.refreshToken = newRefreshToken
+        session.lastUsedAt = Instant.now()
+        session.expiresAt = Instant.now().plusMillis(jwtProperties.refreshTokenExpiration)
+        userSessionRepository.save(session)
         userSessionRepository.deleteByRefreshToken(refreshToken)
 
         return newAccessToken to newRefreshToken

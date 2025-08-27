@@ -17,6 +17,7 @@ import org.hibernate.annotations.BatchSize
 import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.Instant
 import java.time.LocalDateTime
 
 @Entity
@@ -60,10 +61,10 @@ class Movie(
     val releaseDate: LocalDateTime? = null,
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: Instant = Instant.now(),
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: LocalDateTime = LocalDateTime.now()
+    val updatedAt: Instant = Instant.now(),
 ) {
     override fun equals(other: Any?): Boolean =
         this === other || (other is Movie && id != 0L && id == other.id)

@@ -2,28 +2,46 @@ package com.konradjurkowski.moviehub_server.feature.auth.model.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EntityListeners
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import java.time.LocalDateTime
+import jakarta.persistence.Index
+import jakarta.persistence.Table
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
+import java.time.Instant
 
-@Entity(name = "user_sessions")
-data class UserSession(
+@Entity
+@Table(
+    name = "user_sessions",
+    indexes = [
+        Index(name = "idx_user_sessions_user_id", columnList = "user_id")
+    ]
+)
+@EntityListeners(AuditingEntityListener::class)
+class UserSession(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-    @Column(nullable = false)
+    @Column(name = "user_id", nullable = false)
     val userId: Long,
-    @Column(nullable = false, unique = true)
-    val refreshToken: String,
-    @Column
+    @Column(name = "refresh_token", nullable = false, unique = true)
+    var refreshToken: String,
+    @Column(name = "device_info")
     val deviceInfo: String? = null,
-    @Column
+    @Column(name = "ip_address")
     val ipAddress: String? = null,
-    @Column(nullable = false)
-    val createdAt: LocalDateTime = LocalDateTime.now(),
-    @Column(nullable = false)
-    val expiresAt: LocalDateTime,
-    @Column(nullable = false)
-    val lastUsedAt: LocalDateTime = LocalDateTime.now(),
-)
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    val createdAt: Instant = Instant.now(),
+    @Column(name = "expires_at", nullable = false)
+    var expiresAt: Instant,
+    @Column(name = "last_used_at", nullable = false)
+    var lastUsedAt: Instant = Instant.now(),
+) {
+    override fun equals(other: Any?): Boolean =
+        this === other || (other is UserSession && id != 0L && id == other.id)
+
+    override fun hashCode(): Int = id.hashCode()
+}
