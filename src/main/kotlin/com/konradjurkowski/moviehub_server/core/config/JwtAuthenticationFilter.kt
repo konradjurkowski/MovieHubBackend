@@ -22,11 +22,19 @@ class JwtAuthenticationFilter(
         const val BEARER_PREFIX = "Bearer "
     }
 
+    override fun shouldNotFilterAsyncDispatch(): Boolean = true
+    override fun shouldNotFilterErrorDispatch(): Boolean = true
+
     override fun doFilterInternal(
         request: HttpServletRequest,
         response: HttpServletResponse,
         filterChain: FilterChain,
     ) {
+        if (request.method.equals("OPTIONS", true)) {
+            filterChain.doFilter(request, response)
+            return
+        }
+
         val token = extractTokenFromRequest(request)
             ?: return filterChain.doFilter(request, response)
 

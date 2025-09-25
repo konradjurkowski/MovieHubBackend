@@ -1,7 +1,7 @@
 package com.konradjurkowski.moviehub_server.feature.user.service
 
 import com.konradjurkowski.moviehub_server.core.config.SecurityService
-import com.konradjurkowski.moviehub_server.core.model.dto.ErrorCode
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorCode
 import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.group.model.entity.toDto
 import com.konradjurkowski.moviehub_server.feature.group.repository.GroupRepository

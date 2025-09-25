@@ -1,11 +1,12 @@
 package com.konradjurkowski.moviehub_server.core.utils
 
-import com.konradjurkowski.moviehub_server.core.model.dto.ApiResponse
-import com.konradjurkowski.moviehub_server.core.model.dto.ErrorCode
-import com.konradjurkowski.moviehub_server.core.model.dto.ErrorResponse
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorCode
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorResponse
 import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import reactor.core.publisher.Mono
 
 object ApiHandler {
 
@@ -20,7 +21,16 @@ object ApiHandler {
         }
     }
 
-    fun handleException(exception: Exception): ResponseEntity<ApiResponse> {
+    inline fun <reified T : ApiResponse> executeReactive(
+        status: HttpStatus = HttpStatus.OK,
+        crossinline action: () -> Mono<T>
+    ): Mono<ResponseEntity<ApiResponse>> =
+        action()
+            .map<ApiResponse> { it }
+            .map { body -> ResponseEntity.status(status).body(body) }
+            .onErrorResume { ex -> Mono.just(handleException(ex)) }
+
+    fun handleException(exception: Throwable): ResponseEntity<ApiResponse> {
         if (exception is ApiException) {
             val errorResponse = ErrorResponse(code = exception.errorCode.name)
             return ResponseEntity.badRequest().body(errorResponse)

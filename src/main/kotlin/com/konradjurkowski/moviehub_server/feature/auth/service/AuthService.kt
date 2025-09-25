@@ -1,8 +1,8 @@
 package com.konradjurkowski.moviehub_server.feature.auth.service
 
-import com.konradjurkowski.moviehub_server.core.config.JwtProperties
+import com.konradjurkowski.moviehub_server.core.data.properties.JwtProperties
 import com.konradjurkowski.moviehub_server.core.model.ClientInfo
-import com.konradjurkowski.moviehub_server.core.model.dto.ErrorCode
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorCode
 import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginResponse

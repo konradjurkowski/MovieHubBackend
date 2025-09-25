@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.core.config
 
-import com.konradjurkowski.moviehub_server.core.model.dto.ErrorCode
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorCode
 import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.user.model.entity.User
 import org.springframework.security.core.context.SecurityContextHolder

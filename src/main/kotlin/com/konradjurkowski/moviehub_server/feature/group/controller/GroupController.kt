@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.feature.group.controller
 
-import com.konradjurkowski.moviehub_server.core.model.dto.ApiResponse
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 import com.konradjurkowski.moviehub_server.core.utils.ApiHandler
 import com.konradjurkowski.moviehub_server.feature.group.model.dto.create.CreateGroupRequest
 import com.konradjurkowski.moviehub_server.feature.group.model.dto.join.JoinGroupRequest

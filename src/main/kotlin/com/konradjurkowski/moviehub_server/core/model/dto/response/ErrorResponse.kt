@@ -1,4 +1,4 @@
-package com.konradjurkowski.moviehub_server.core.model.dto
+package com.konradjurkowski.moviehub_server.core.model.dto.response
 
 data class ErrorResponse(
     val message: String? = null,
@@ -25,6 +25,9 @@ enum class ErrorCode {
     USER_ALREADY_IN_GROUP,
     USER_NOT_IN_GROUP,
     CANNOT_LEAVE_LAST_ADMIN,
+
+    // Movies error
+    MOVIE_ALREADY_EXISTS,
 
     // Other
     GENERIC_ERROR,

@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.feature.user.controller
 
-import com.konradjurkowski.moviehub_server.core.model.dto.ApiResponse
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 import com.konradjurkowski.moviehub_server.core.utils.ApiHandler
 import com.konradjurkowski.moviehub_server.feature.user.service.UserService
 import org.springframework.http.ResponseEntity

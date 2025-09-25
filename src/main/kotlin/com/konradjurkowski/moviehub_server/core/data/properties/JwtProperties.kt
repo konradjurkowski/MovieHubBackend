@@ -1,4 +1,4 @@
-package com.konradjurkowski.moviehub_server.core.config
+package com.konradjurkowski.moviehub_server.core.data.properties
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

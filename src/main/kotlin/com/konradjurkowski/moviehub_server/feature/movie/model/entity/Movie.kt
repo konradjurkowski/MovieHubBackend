@@ -1,6 +1,7 @@
 package com.konradjurkowski.moviehub_server.feature.movie.model.entity
 
 import com.konradjurkowski.moviehub_server.feature.group.model.entity.Group
+import com.konradjurkowski.moviehub_server.feature.movie.model.dto.MovieDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -18,7 +19,6 @@ import org.springframework.data.annotation.CreatedDate
 import org.springframework.data.annotation.LastModifiedDate
 import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.Instant
-import java.time.LocalDateTime
 
 @Entity
 @Table(
@@ -47,7 +47,7 @@ class Movie(
     val tmdbId: Long,
     @Column(nullable = false)
     val title: String,
-    @Column(nullable = false)
+    @Column(nullable = false, length = 1000)
     val overview: String,
     @Column(nullable = false)
     val language: String,
@@ -58,7 +58,7 @@ class Movie(
     @Column(name = "background_url")
     val backgroundUrl: String? = null,
     @Column(name = "release_date")
-    val releaseDate: LocalDateTime? = null,
+    val releaseDate: String? = null,
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: Instant = Instant.now(),
@@ -70,4 +70,19 @@ class Movie(
         this === other || (other is Movie && id != 0L && id == other.id)
 
     override fun hashCode(): Int = id.hashCode()
+}
+
+fun Movie.toDto(): MovieDto {
+    return MovieDto(
+        id = id,
+        groupId = groupId,
+        tmdbId = tmdbId,
+        title = title,
+        overview = overview,
+        language = language,
+        adult = adult,
+        posterUrl = posterUrl,
+        backgroundUrl = backgroundUrl,
+        releaseDate = releaseDate,
+    )
 }

@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.feature.auth.service
 
-import com.konradjurkowski.moviehub_server.core.config.JwtProperties
+import com.konradjurkowski.moviehub_server.core.data.properties.JwtProperties
 import com.konradjurkowski.moviehub_server.core.model.ClientInfo
 import com.konradjurkowski.moviehub_server.feature.user.model.entity.User
 import com.konradjurkowski.moviehub_server.feature.auth.model.entity.UserSession

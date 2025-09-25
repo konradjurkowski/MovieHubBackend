@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.feature.auth.model.dto.token
 
-import com.konradjurkowski.moviehub_server.core.model.dto.ApiResponse
+import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 
 data class RefreshTokenResponse(
     val accessToken: String,
