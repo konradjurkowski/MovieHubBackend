@@ -31,6 +31,14 @@ class MovieController(
         return ApiHandler.execute { movieService.getAddedTmdbIds(groupId) }
     }
 
+    @GetMapping("/leaderboard")
+    fun getMovieLeaderboard(
+        @RequestParam groupId: Long,
+        @RequestParam(defaultValue = "1") page: Int,
+    ): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute { movieService.getMovieLeaderboard(groupId = groupId, page = page) }
+    }
+
     @GetMapping("/search")
     fun searchMovies(
         @RequestParam query: String,

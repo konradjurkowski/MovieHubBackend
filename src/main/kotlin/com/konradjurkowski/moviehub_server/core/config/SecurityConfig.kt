@@ -22,6 +22,8 @@ class SecurityConfig(
     private val publicEndpoints = arrayOf(
         "/api/auth/login",
         "/api/auth/register",
+        "/api/auth/activation",
+        "/api/auth/activation/resend",
         "/api/auth/refresh",
         "/api/auth/logout",
         "/h2-console/**"

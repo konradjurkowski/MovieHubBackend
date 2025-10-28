@@ -3,6 +3,8 @@ package com.konradjurkowski.moviehub_server.feature.auth.controller
 import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 import com.konradjurkowski.moviehub_server.core.model.toClientInfo
 import com.konradjurkowski.moviehub_server.core.utils.ApiHandler
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ActivateAccountRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ResendActivationCodeRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.logout.LogoutRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterRequest
@@ -33,6 +35,22 @@ class AuthController(
     @PostMapping("/register")
     fun register(@RequestBody request: RegisterRequest): ResponseEntity<ApiResponse> {
         return ApiHandler.execute(status = HttpStatus.CREATED) { authService.register(request) }
+    }
+
+    @PostMapping("/activate")
+    fun activateAccount(@RequestBody request: ActivateAccountRequest): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute {
+            authService.activateAccount(request)
+            object : ApiResponse {}
+        }
+    }
+
+    @PostMapping("/activate/resend")
+    fun resendActivationCode(@RequestBody request: ResendActivationCodeRequest): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute {
+            authService.sendActivationCode(request)
+            object : ApiResponse {}
+        }
     }
 
     @PostMapping("/refresh")

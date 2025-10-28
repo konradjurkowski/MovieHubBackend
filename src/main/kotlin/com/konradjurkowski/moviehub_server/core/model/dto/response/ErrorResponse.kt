@@ -7,10 +7,15 @@ data class ErrorResponse(
 
 enum class ErrorCode {
     // Authentication
+    ACCOUNT_NOT_ACTIVATED,
     INVALID_CREDENTIALS,
     EMAIL_ALREADY_EXISTS,
     INVALID_REFRESH_TOKEN,
     USER_NOT_AUTHENTICATED,
+
+    // Activation code
+    ACTIVATION_CODE_EXPIRED,
+    INVALID_ACTIVATION_CODE,
 
     // Invitation codes
     INVALID_INVITATION_CODE_FORMAT,
@@ -30,5 +35,7 @@ enum class ErrorCode {
     MOVIE_ALREADY_EXISTS,
 
     // Other
+    TOO_MANY_ATTEMPTS,
+    TOO_MANY_REQUESTS,
     GENERIC_ERROR,
 }

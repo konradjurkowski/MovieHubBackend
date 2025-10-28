@@ -36,6 +36,9 @@ class User(
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     var role: UserRole = UserRole.USER,
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    var status: UserStatus = UserStatus.PENDING,
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: Instant = Instant.now(),
@@ -51,6 +54,10 @@ class User(
 
 enum class UserRole {
     USER, ADMIN
+}
+
+enum class UserStatus {
+    PENDING, ACTIVE, SUSPENDED
 }
 
 fun User.toDto(groups: List<GroupDto> = emptyList()): UserDto {

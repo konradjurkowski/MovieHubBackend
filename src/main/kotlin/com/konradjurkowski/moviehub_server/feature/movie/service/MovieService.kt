@@ -16,6 +16,8 @@ import com.konradjurkowski.moviehub_server.feature.movie.model.entity.Movie
 import com.konradjurkowski.moviehub_server.feature.movie.model.entity.toDto
 import com.konradjurkowski.moviehub_server.feature.movie.repository.MovieRepository
 import org.springframework.core.ParameterizedTypeReference
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.core.publisher.Mono
@@ -46,11 +48,30 @@ class MovieService(
             backgroundUrl = request.backgroundUrl,
             releaseDate = request.releaseDate,
         )
-        return  movieRepository.save(movie).toDto()
+        return movieRepository.save(movie).toDto()
     }
 
     fun getAddedTmdbIds(groupId: Long): AddedTmdbIdsResponse {
         return AddedTmdbIdsResponse(movies = movieRepository.findMovieTmdbIdsByGroupId(groupId))
+    }
+
+    fun getMovieLeaderboard(
+        groupId: Long,
+        page: Int = 1,
+    ): SearchResponse<MovieDto> {
+        val pageNumber = (page.coerceAtLeast(1) - 1)
+        val pageable = PageRequest.of(
+            pageNumber,
+            20,
+            Sort.by(Sort.Direction.DESC, "id"),
+        )
+        val moviesPage = movieRepository.findByGroupId(groupId, pageable)
+        return SearchResponse(
+            page = (moviesPage.number + 1).toLong(),
+            results = moviesPage.content.map { it.toDto() },
+            totalPages = moviesPage.totalPages.toLong(),
+            totalResults = moviesPage.totalElements,
+        )
     }
 
     fun searchMovies(
