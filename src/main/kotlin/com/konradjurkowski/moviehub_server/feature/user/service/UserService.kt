@@ -37,6 +37,10 @@ class UserService(
         return userRepository.save(user)
     }
 
+    fun updateUser(user: User) {
+        userRepository.save(user)
+    }
+
     fun findUserDtoById(userId: Long): UserDto? {
         val user = userRepository.findById(userId).getOrElse { null } ?: return null
         val groups = groupRepository.findGroupsByUserId(user.id).map { it.toDto() }

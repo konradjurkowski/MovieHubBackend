@@ -23,7 +23,7 @@ class AuthService(
     private val jwtProperties: JwtProperties,
     private val tokenService: TokenService,
     private val userService: UserService,
-    private val activationCodeService: ActivationCodeService,
+    private val verificationTokenService: VerificationTokenService,
     private val passwordEncoder: BCryptPasswordEncoder,
 ) {
 
@@ -37,7 +37,7 @@ class AuthService(
             password = passwordEncoder.encode(request.password),
             name = request.name,
         )
-        activationCodeService.createCode(user)
+        verificationTokenService.createActivationToken(user)
         return RegisterResponse(user = user.toDto())
     }
 
@@ -70,14 +70,17 @@ class AuthService(
         val user = userService.findByEmail(request.email)
             ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_CODE)
 
-        val isCodeValid = activationCodeService.verifyCode(user, request.code)
+        val isCodeValid = verificationTokenService.verifyActivationToken(user, request.code)
         if (!isCodeValid) throw ApiException(ErrorCode.INVALID_ACTIVATION_CODE)
+
+        user.status = UserStatus.ACTIVE
+        userService.updateUser(user)
     }
 
     fun sendActivationCode(request: ResendActivationCodeRequest) {
         val user = userService.findByEmail(request.email) ?: return
         if (user.status != UserStatus.ACTIVE) {
-            activationCodeService.createCode(user)
+            verificationTokenService.createActivationToken(user)
         }
     }
 
