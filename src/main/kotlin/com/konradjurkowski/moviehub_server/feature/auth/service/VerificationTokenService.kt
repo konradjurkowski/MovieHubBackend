@@ -30,7 +30,7 @@ class VerificationTokenService(
     private val secureRandom = SecureRandom()
 
     @Transactional
-    fun createActivationToken(user: User) =
+    fun createAccountActivationToken(user: User) =
         createToken(user, VerificationTokenType.ACCOUNT_ACTIVATION)
 
     @Transactional
@@ -38,7 +38,7 @@ class VerificationTokenService(
         createToken(user, VerificationTokenType.PASSWORD_RESET)
 
     @Transactional
-    fun verifyActivationToken(user: User, rawToken: String) =
+    fun verifyAccountActivationToken(user: User, rawToken: String) =
         verifyToken(user = user, type = VerificationTokenType.ACCOUNT_ACTIVATION, rawToken = rawToken)
 
     @Transactional
@@ -81,10 +81,10 @@ class VerificationTokenService(
 
     private fun verifyToken(user: User, type: VerificationTokenType, rawToken: String): Boolean {
         val verificationToken = repository.findByUserIdAndType(userId = user.id, type = type)
-            ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_CODE)
+            ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
 
         if (verificationToken.expiresAt.isBefore(Instant.now()))
-            throw ApiException(ErrorCode.ACTIVATION_CODE_EXPIRED)
+            throw ApiException(ErrorCode.VERIFICATION_CODE_EXPIRED)
 
         if (verificationToken.attempts >= verificationToken.maxAttempts)
             throw ApiException(ErrorCode.TOO_MANY_ATTEMPTS)

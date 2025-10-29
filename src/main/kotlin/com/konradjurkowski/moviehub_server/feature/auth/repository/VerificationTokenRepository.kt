@@ -11,10 +11,6 @@ import java.time.Instant
 @Repository
 interface VerificationTokenRepository : JpaRepository<VerificationToken, Long> {
     fun findByUserIdAndType(userId: Long, type: VerificationTokenType): VerificationToken?
-
-    @Modifying
-    fun deleteByUserIdAndType(userId: Long, type: VerificationTokenType)
-
     @Modifying
     @Query("DELETE FROM VerificationToken t WHERE t.expiresAt <= :now")
     fun deleteExpired(now: Instant): Int

@@ -4,9 +4,11 @@ import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 import com.konradjurkowski.moviehub_server.core.model.toClientInfo
 import com.konradjurkowski.moviehub_server.core.utils.ApiHandler
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ActivateAccountRequest
-import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ResendActivationCodeRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.SendActivationCodeRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.logout.LogoutRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.ResetPasswordRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.SendPasswordResetRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenRequest
 import com.konradjurkowski.moviehub_server.feature.auth.service.AuthService
@@ -37,6 +39,22 @@ class AuthController(
         return ApiHandler.execute(status = HttpStatus.CREATED) { authService.register(request) }
     }
 
+    @PostMapping("/reset-password")
+    fun resetPassword(@RequestBody request: ResetPasswordRequest): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute {
+            authService.resetPassword(request)
+            object : ApiResponse {}
+        }
+    }
+
+    @PostMapping("/reset-password/code")
+    fun sendResetPasswordCode(@RequestBody request: SendPasswordResetRequest): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute {
+            authService.sendPasswordResetCode(request)
+            object : ApiResponse {}
+        }
+    }
+
     @PostMapping("/activate")
     fun activateAccount(@RequestBody request: ActivateAccountRequest): ResponseEntity<ApiResponse> {
         return ApiHandler.execute {
@@ -45,10 +63,10 @@ class AuthController(
         }
     }
 
-    @PostMapping("/activate/resend")
-    fun resendActivationCode(@RequestBody request: ResendActivationCodeRequest): ResponseEntity<ApiResponse> {
+    @PostMapping("/activate/code")
+    fun sendActivationCode(@RequestBody request: SendActivationCodeRequest): ResponseEntity<ApiResponse> {
         return ApiHandler.execute {
-            authService.sendActivationCode(request)
+            authService.sendActivateAccountCode(request)
             object : ApiResponse {}
         }
     }

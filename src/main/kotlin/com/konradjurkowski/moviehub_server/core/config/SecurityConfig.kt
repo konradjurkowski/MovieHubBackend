@@ -22,6 +22,8 @@ class SecurityConfig(
     private val publicEndpoints = arrayOf(
         "/api/auth/login",
         "/api/auth/register",
+        "/api/auth/reset-password",
+        "/api/auth/reset-password/code",
         "/api/auth/activate",
         "/api/auth/activate/resend",
         "/api/auth/refresh",

@@ -5,9 +5,11 @@ import com.konradjurkowski.moviehub_server.core.model.ClientInfo
 import com.konradjurkowski.moviehub_server.core.model.dto.response.ErrorCode
 import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ActivateAccountRequest
-import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ResendActivationCodeRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.SendActivationCodeRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginResponse
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.ResetPasswordRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.SendPasswordResetRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterResponse
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenRequest
@@ -37,7 +39,7 @@ class AuthService(
             password = passwordEncoder.encode(request.password),
             name = request.name,
         )
-        verificationTokenService.createActivationToken(user)
+        verificationTokenService.createAccountActivationToken(user)
         return RegisterResponse(user = user.toDto())
     }
 
@@ -66,21 +68,42 @@ class AuthService(
         )
     }
 
+    fun sendPasswordResetCode(request: SendPasswordResetRequest) {
+        val user = userService.findByEmail(request.email) ?: return
+
+        if (user.status != UserStatus.ACTIVE) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_ACTIVATED)
+        }
+
+        verificationTokenService.createPasswordResetToken(user)
+    }
+
+    fun resetPassword(request: ResetPasswordRequest) {
+        val user = userService.findByEmail(request.email)
+            ?: throw ApiException(ErrorCode.INVALID_RESET_PASSWORD_CODE)
+
+        val isCodeValid = verificationTokenService.verifyPasswordResetToken(user, request.code)
+        if (!isCodeValid) throw ApiException(ErrorCode.INVALID_RESET_PASSWORD_CODE)
+
+        user.password = passwordEncoder.encode(request.password)
+        userService.updateUser(user)
+    }
+
     fun activateAccount(request: ActivateAccountRequest) {
         val user = userService.findByEmail(request.email)
-            ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_CODE)
+            ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
 
-        val isCodeValid = verificationTokenService.verifyActivationToken(user, request.code)
-        if (!isCodeValid) throw ApiException(ErrorCode.INVALID_ACTIVATION_CODE)
+        val isCodeValid = verificationTokenService.verifyAccountActivationToken(user, request.code)
+        if (!isCodeValid) throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
 
         user.status = UserStatus.ACTIVE
         userService.updateUser(user)
     }
 
-    fun sendActivationCode(request: ResendActivationCodeRequest) {
+    fun sendActivateAccountCode(request: SendActivationCodeRequest) {
         val user = userService.findByEmail(request.email) ?: return
         if (user.status != UserStatus.ACTIVE) {
-            verificationTokenService.createActivationToken(user)
+            verificationTokenService.createAccountActivationToken(user)
         }
     }
 
