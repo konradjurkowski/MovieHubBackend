@@ -27,16 +27,23 @@ class MovieController(
     }
 
     @GetMapping("/ids")
-    fun getAddedTmdbIds(@RequestParam groupId: Long): ResponseEntity<ApiResponse> {
-        return ApiHandler.execute { movieService.getAddedTmdbIds(groupId) }
+    fun getAddedTmdbIds(): ResponseEntity<ApiResponse> {
+        return ApiHandler.execute { movieService.getAddedTmdbIds() }
     }
 
     @GetMapping("/leaderboard")
     fun getMovieLeaderboard(
-        @RequestParam groupId: Long,
         @RequestParam(defaultValue = "1") page: Int,
     ): ResponseEntity<ApiResponse> {
-        return ApiHandler.execute { movieService.getMovieLeaderboard(groupId = groupId, page = page) }
+        return ApiHandler.execute { movieService.getMovieLeaderboard(page = page) }
+    }
+
+    @GetMapping("/popular")
+    fun getPopularMovies(
+        @RequestParam(defaultValue = "1") page: Int,
+        @RequestParam(required = false) language: String?,
+    ): Mono<ResponseEntity<ApiResponse>> {
+        return ApiHandler.executeReactive { movieService.getPopularMovies(page = page, language = language) }
     }
 
     @GetMapping("/search")
@@ -46,14 +53,6 @@ class MovieController(
         @RequestParam(required = false) language: String?,
     ): Mono<ResponseEntity<ApiResponse>> {
         return ApiHandler.executeReactive { movieService.searchMovies(query = query, page = page, language = language) }
-    }
-
-    @GetMapping("/popular")
-    fun getPopularMovies(
-        @RequestParam(defaultValue = "1") page: Int,
-        @RequestParam(required = false) language: String?,
-    ): Mono<ResponseEntity<ApiResponse>> {
-        return ApiHandler.executeReactive { movieService.getPopularMovies(page = page, language = language) }
     }
 
     @GetMapping("/preview/{tmdbId}")

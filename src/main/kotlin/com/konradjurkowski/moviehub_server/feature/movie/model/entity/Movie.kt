@@ -1,17 +1,12 @@
 package com.konradjurkowski.moviehub_server.feature.movie.model.entity
 
-import com.konradjurkowski.moviehub_server.feature.group.model.entity.Group
 import com.konradjurkowski.moviehub_server.feature.movie.model.dto.MovieDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
-import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
-import jakarta.persistence.Index
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import org.hibernate.annotations.BatchSize
@@ -23,14 +18,9 @@ import java.time.Instant
 @Entity
 @Table(
     name = "movies",
-    indexes = [
-        Index(name = "idx_movies_group_id", columnList = "group_id"),
-        Index(name = "idx_movies_group_id_created_at", columnList = "group_id, created_at"),
-        Index(name = "idx_movies_group_id_updated_at", columnList = "group_id, updated_at")
-    ],
     uniqueConstraints = [
-        UniqueConstraint(name = "uk_movies_group_tmdb", columnNames = ["group_id", "tmdb_id"])
-    ]
+        UniqueConstraint(name = "uk_movies_tmdb", columnNames = ["tmdb_id"])
+    ],
 )
 @EntityListeners(AuditingEntityListener::class)
 @BatchSize(size = 50)
@@ -38,11 +28,6 @@ class Movie(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    val group: Group,
-    @Column(name = "group_id", insertable = false, updatable = false)
-    val groupId: Long? = null,
     @Column(name = "tmdb_id", nullable = false)
     val tmdbId: Long,
     @Column(nullable = false)
@@ -75,7 +60,6 @@ class Movie(
 fun Movie.toDto(): MovieDto {
     return MovieDto(
         id = id,
-        groupId = groupId,
         tmdbId = tmdbId,
         title = title,
         overview = overview,

@@ -25,7 +25,7 @@ class SecurityConfig(
         "/api/auth/reset-password",
         "/api/auth/reset-password/code",
         "/api/auth/activate",
-        "/api/auth/activate/resend",
+        "/api/auth/activate/code",
         "/api/auth/refresh",
         "/api/auth/logout",
         "/h2-console/**"

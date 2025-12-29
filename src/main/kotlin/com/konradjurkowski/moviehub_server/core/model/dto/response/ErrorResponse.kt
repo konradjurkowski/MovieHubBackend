@@ -26,12 +26,6 @@ enum class ErrorCode {
     // User errors
     USER_NOT_FOUND,
 
-    // Group errors
-    GROUP_NOT_FOUND,
-    USER_ALREADY_IN_GROUP,
-    USER_NOT_IN_GROUP,
-    CANNOT_LEAVE_LAST_ADMIN,
-
     // Movies error
     MOVIE_ALREADY_EXISTS,
 

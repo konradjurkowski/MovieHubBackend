@@ -1,8 +1,8 @@
 package com.konradjurkowski.moviehub_server.feature.auth.service
 
 import com.konradjurkowski.moviehub_server.core.data.properties.JwtProperties
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.User
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.UserRole
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.User
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.UserRole
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys

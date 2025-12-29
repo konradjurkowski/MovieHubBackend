@@ -16,8 +16,8 @@ import java.time.Instant
 @Table(
     name = "user_sessions",
     indexes = [
-        Index(name = "idx_user_sessions_user_id", columnList = "user_id")
-    ]
+        Index(name = "idx_user_sessions_user_id", columnList = "user_id"),
+    ],
 )
 @EntityListeners(AuditingEntityListener::class)
 class UserSession(

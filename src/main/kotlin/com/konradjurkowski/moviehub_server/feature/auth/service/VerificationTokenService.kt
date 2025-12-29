@@ -7,7 +7,7 @@ import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.auth.model.entity.VerificationToken
 import com.konradjurkowski.moviehub_server.feature.auth.model.entity.VerificationTokenType
 import com.konradjurkowski.moviehub_server.feature.auth.repository.VerificationTokenRepository
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.User
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.User
 import jakarta.transaction.Transactional
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service

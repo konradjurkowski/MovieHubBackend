@@ -12,7 +12,7 @@ import jakarta.persistence.Table
 import java.time.Instant
 
 enum class VerificationTokenType {
-    ACCOUNT_ACTIVATION, PASSWORD_RESET
+    ACCOUNT_ACTIVATION, PASSWORD_RESET,
 }
 
 @Entity

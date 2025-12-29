@@ -1,6 +1,6 @@
 package com.konradjurkowski.moviehub_server.core.config
 
-import com.konradjurkowski.moviehub_server.feature.user.repository.UserRepository
+import com.konradjurkowski.moviehub_server.feature.auth.repository.UserRepository
 import com.konradjurkowski.moviehub_server.feature.auth.service.JwtService
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest

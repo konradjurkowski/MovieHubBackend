@@ -1,7 +1,7 @@
 package com.konradjurkowski.moviehub_server.core.service.email
 
 import com.konradjurkowski.moviehub_server.core.model.EmailRequest
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.User
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.User
 
 object EmailRequestFactory {
 
@@ -17,6 +17,7 @@ object EmailRequestFactory {
             </p>
 	        <p>Your activation code is valid for 15 minutes:</p>
             <p style="font-size:1.3em; font-weight:bold; letter-spacing:2px;">$code</p>
+            <img src="https://zxing.org/w/chart?cht=qr&chs=200x200&chld=L&choe=UTF-8&chl=$code" alt="QR code" style="border:1px solid #ddd;"/>
             <p>Best regards, MovieHub Team</p>
         </body>
         </html>
@@ -43,6 +44,7 @@ object EmailRequestFactory {
             </p>
 	        <p>Your password reset code is valid for 15 minutes:</p>
             <p style="font-size:1.3em; font-weight:bold; letter-spacing:2px;">$code</p>
+            <img src="https://zxing.org/w/chart?cht=qr&chs=200x200&chld=L&choe=UTF-8&chl=$code" alt="QR code" style="border:1px solid #ddd;"/>
             <p>Best regards, MovieHub Team</p>
         </body>
         </html>

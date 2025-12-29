@@ -14,16 +14,16 @@ import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.Regis
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterResponse
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenResponse
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.UserStatus
-import com.konradjurkowski.moviehub_server.feature.user.model.entity.toDto
-import com.konradjurkowski.moviehub_server.feature.user.service.UserService
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.UserStatus
+import com.konradjurkowski.moviehub_server.feature.auth.model.entity.toDto
+import com.konradjurkowski.moviehub_server.feature.auth.service.UserService
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
     private val jwtProperties: JwtProperties,
-    private val tokenService: TokenService,
+    private val authTokenService: AuthTokenService,
     private val userService: UserService,
     private val verificationTokenService: VerificationTokenService,
     private val passwordEncoder: BCryptPasswordEncoder,
@@ -55,13 +55,9 @@ class AuthService(
             throw ApiException(errorCode = ErrorCode.INVALID_CREDENTIALS)
         }
 
-        val (accessToken, refreshToken) = tokenService.createTokens(user = user, clientInfo = clientInfo)
-
-        val userDto = userService.findUserDtoById(user.id)
-            ?: throw ApiException(errorCode = ErrorCode.INVALID_CREDENTIALS)
-
+        val (accessToken, refreshToken) = authTokenService.createTokens(user = user, clientInfo = clientInfo)
         return LoginResponse(
-            user = userDto,
+            user = user.toDto(),
             accessToken = accessToken,
             refreshToken = refreshToken,
             expiresIn = jwtProperties.accessTokenExpiration,
@@ -89,6 +85,14 @@ class AuthService(
         userService.updateUser(user)
     }
 
+    fun sendActivateAccountCode(request: SendActivationCodeRequest) {
+        val user = userService.findByEmail(request.email) ?: return
+
+        if (user.status != UserStatus.ACTIVE) {
+            verificationTokenService.createAccountActivationToken(user)
+        }
+    }
+
     fun activateAccount(request: ActivateAccountRequest) {
         val user = userService.findByEmail(request.email)
             ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
@@ -100,15 +104,8 @@ class AuthService(
         userService.updateUser(user)
     }
 
-    fun sendActivateAccountCode(request: SendActivationCodeRequest) {
-        val user = userService.findByEmail(request.email) ?: return
-        if (user.status != UserStatus.ACTIVE) {
-            verificationTokenService.createAccountActivationToken(user)
-        }
-    }
-
     fun refreshToken(request: RefreshTokenRequest): RefreshTokenResponse {
-        val (accessToken, refreshToken) = tokenService.refreshTokens(request.refreshToken)
+        val (accessToken, refreshToken) = authTokenService.refreshTokens(request.refreshToken)
             ?: throw ApiException(errorCode = ErrorCode.INVALID_REFRESH_TOKEN)
 
         return RefreshTokenResponse(
@@ -119,6 +116,6 @@ class AuthService(
     }
 
     fun logout(refreshToken: String) {
-        tokenService.invalidateRefreshToken(refreshToken)
+        authTokenService.invalidateRefreshToken(refreshToken)
     }
 }
