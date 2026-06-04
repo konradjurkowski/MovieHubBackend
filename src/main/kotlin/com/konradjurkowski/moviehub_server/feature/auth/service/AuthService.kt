@@ -7,16 +7,16 @@ import com.konradjurkowski.moviehub_server.core.utils.exceptions.ApiException
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.ActivateAccountRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.activation.SendActivationCodeRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginRequest
-import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.LoginResponse
-import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.ResetPasswordRequest
-import com.konradjurkowski.moviehub_server.feature.auth.model.dto.passwrd_reset.SendPasswordResetRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.login.AuthResponse
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.password_reset.ResetPasswordRequest
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.password_reset.SendPasswordResetRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.register.RegisterResponse
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenRequest
 import com.konradjurkowski.moviehub_server.feature.auth.model.dto.token.RefreshTokenResponse
 import com.konradjurkowski.moviehub_server.feature.auth.model.entity.UserStatus
 import com.konradjurkowski.moviehub_server.feature.auth.model.entity.toDto
-import com.konradjurkowski.moviehub_server.feature.auth.service.UserService
+import org.springframework.dao.DataIntegrityViolationException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 
@@ -34,29 +34,33 @@ class AuthService(
             throw ApiException(errorCode = ErrorCode.EMAIL_ALREADY_EXISTS)
         }
 
-        val user = userService.createUser(
-            email = request.email,
-            password = passwordEncoder.encode(request.password),
-            name = request.name,
-        )
+        val user = try {
+            userService.createUser(
+                email = request.email,
+                password = passwordEncoder.encode(request.password),
+                name = request.name,
+            )
+        } catch (exception: DataIntegrityViolationException) {
+            throw ApiException(errorCode = ErrorCode.EMAIL_ALREADY_EXISTS)
+        }
         verificationTokenService.createAccountActivationToken(user)
         return RegisterResponse(user = user.toDto())
     }
 
-    fun login(request: LoginRequest, clientInfo: ClientInfo): LoginResponse {
+    fun login(request: LoginRequest, clientInfo: ClientInfo): AuthResponse {
         val user = userService.findByEmail(request.email)
             ?: throw ApiException(errorCode = ErrorCode.INVALID_CREDENTIALS)
-
-        if (user.status != UserStatus.ACTIVE) {
-            throw ApiException(ErrorCode.ACCOUNT_NOT_ACTIVATED)
-        }
 
         if (!passwordEncoder.matches(request.password, user.password)) {
             throw ApiException(errorCode = ErrorCode.INVALID_CREDENTIALS)
         }
 
+        if (user.status != UserStatus.ACTIVE) {
+            throw ApiException(ErrorCode.ACCOUNT_NOT_ACTIVATED)
+        }
+
         val (accessToken, refreshToken) = authTokenService.createTokens(user = user, clientInfo = clientInfo)
-        return LoginResponse(
+        return AuthResponse(
             user = user.toDto(),
             accessToken = accessToken,
             refreshToken = refreshToken,
@@ -83,6 +87,8 @@ class AuthService(
 
         user.password = passwordEncoder.encode(request.password)
         userService.updateUser(user)
+
+        authTokenService.invalidateAllUserTokens(user.id)
     }
 
     fun sendActivateAccountCode(request: SendActivationCodeRequest) {
@@ -93,7 +99,7 @@ class AuthService(
         }
     }
 
-    fun activateAccount(request: ActivateAccountRequest) {
+    fun activateAccount(request: ActivateAccountRequest, clientInfo: ClientInfo): AuthResponse {
         val user = userService.findByEmail(request.email)
             ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
 
@@ -102,6 +108,14 @@ class AuthService(
 
         user.status = UserStatus.ACTIVE
         userService.updateUser(user)
+
+        val (accessToken, refreshToken) = authTokenService.createTokens(user = user, clientInfo = clientInfo)
+        return AuthResponse(
+            user = user.toDto(),
+            accessToken = accessToken,
+            refreshToken = refreshToken,
+            expiresIn = jwtProperties.accessTokenExpiration,
+        )
     }
 
     fun refreshToken(request: RefreshTokenRequest): RefreshTokenResponse {

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface UserSessionRepository : JpaRepository<UserSession, Long> {
-    fun findByRefreshToken(refreshToken: String): UserSession?
-    fun deleteByRefreshToken(refreshToken: String)
+    fun findByRefreshTokenHash(refreshTokenHash: String): UserSession?
+    fun deleteByRefreshTokenHash(refreshTokenHash: String)
     fun deleteByUserId(userId: Long)
 }

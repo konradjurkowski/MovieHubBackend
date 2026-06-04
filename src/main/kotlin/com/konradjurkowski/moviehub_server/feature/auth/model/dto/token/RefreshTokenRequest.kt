@@ -1,3 +1,8 @@
 package com.konradjurkowski.moviehub_server.feature.auth.model.dto.token
 
-data class RefreshTokenRequest(val refreshToken: String)
+import jakarta.validation.constraints.NotBlank
+
+data class RefreshTokenRequest(
+    @field:NotBlank
+    val refreshToken: String,
+)

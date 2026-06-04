@@ -52,7 +52,7 @@ class SecurityConfig(
             }
             .cors { }
             .csrf { it.disable() }
-            .headers { it.frameOptions().disable() }
+            .headers { it.frameOptions { frameOptions -> frameOptions.sameOrigin() } }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
             .build()

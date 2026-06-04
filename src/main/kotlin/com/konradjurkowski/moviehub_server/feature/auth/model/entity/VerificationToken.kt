@@ -39,6 +39,6 @@ class VerificationToken(
     var attempts: Int = 0,
     @Column(nullable = false)
     var maxAttempts: Int = 5,
-    @Column(nullable = true)
+    @Column(nullable = false)
     var lastSentAt: Instant = Instant.now(),
 )

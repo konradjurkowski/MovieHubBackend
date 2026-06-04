@@ -8,6 +8,7 @@ import com.konradjurkowski.moviehub_server.feature.auth.repository.UserRepositor
 import com.konradjurkowski.moviehub_server.feature.auth.repository.UserSessionRepository
 import jakarta.transaction.Transactional
 import org.springframework.stereotype.Service
+import java.security.MessageDigest
 import java.time.Instant
 
 @Service
@@ -18,13 +19,14 @@ class AuthTokenService(
     private val userSessionRepository: UserSessionRepository,
 ) {
 
+    @Transactional
     fun createTokens(user: User, clientInfo: ClientInfo): Pair<String, String> {
         val accessToken = jwtService.generateAccessToken(user = user)
         val refreshToken = jwtService.generateRefreshToken()
 
         val session = UserSession(
             userId = user.id,
-            refreshToken = refreshToken,
+            refreshTokenHash = refreshToken.sha256(),
             deviceInfo = clientInfo.deviceInfo,
             ipAddress = clientInfo.ipAddress,
             expiresAt = Instant.now().plusMillis(jwtProperties.refreshTokenExpiration),
@@ -34,11 +36,12 @@ class AuthTokenService(
         return accessToken to refreshToken
     }
 
+    @Transactional
     fun refreshTokens(refreshToken: String): Pair<String, String>? {
-        val session = userSessionRepository.findByRefreshToken(refreshToken) ?: return null
+        val session = userSessionRepository.findByRefreshTokenHash(refreshToken.sha256()) ?: return null
 
         if (session.expiresAt.isBefore(Instant.now())) {
-            userSessionRepository.deleteByRefreshToken(refreshToken)
+            userSessionRepository.delete(session)
             return null
         }
 
@@ -47,22 +50,26 @@ class AuthTokenService(
         val newAccessToken = jwtService.generateAccessToken(user = user)
         val newRefreshToken = jwtService.generateRefreshToken()
 
-        session.refreshToken = newRefreshToken
+        session.refreshTokenHash = newRefreshToken.sha256()
         session.lastUsedAt = Instant.now()
         session.expiresAt = Instant.now().plusMillis(jwtProperties.refreshTokenExpiration)
         userSessionRepository.save(session)
-        userSessionRepository.deleteByRefreshToken(refreshToken)
 
         return newAccessToken to newRefreshToken
     }
 
     @Transactional
     fun invalidateRefreshToken(refreshToken: String) {
-        userSessionRepository.deleteByRefreshToken(refreshToken)
+        userSessionRepository.deleteByRefreshTokenHash(refreshToken.sha256())
     }
 
     @Transactional
     fun invalidateAllUserTokens(userId: Long) {
         userSessionRepository.deleteByUserId(userId)
     }
+
+    private fun String.sha256(): String =
+        MessageDigest.getInstance("SHA-256")
+            .digest(toByteArray())
+            .joinToString(separator = "") { "%02x".format(it) }
 }

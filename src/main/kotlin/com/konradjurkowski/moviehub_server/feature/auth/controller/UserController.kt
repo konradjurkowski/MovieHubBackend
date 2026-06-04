@@ -1,9 +1,7 @@
 package com.konradjurkowski.moviehub_server.feature.auth.controller
 
-import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
-import com.konradjurkowski.moviehub_server.core.utils.ApiHandler
+import com.konradjurkowski.moviehub_server.feature.auth.model.dto.user.UserDto
 import com.konradjurkowski.moviehub_server.feature.auth.service.UserService
-import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -15,7 +13,7 @@ class UserController(
 ) {
 
     @GetMapping
-    fun getUserDetails(): ResponseEntity<ApiResponse> {
-        return ApiHandler.execute { userService.getCurrentUser() }
+    fun getUserDetails(): UserDto {
+        return userService.getCurrentUser()
     }
 }

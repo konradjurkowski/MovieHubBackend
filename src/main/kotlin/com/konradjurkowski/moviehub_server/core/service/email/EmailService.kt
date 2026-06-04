@@ -1,6 +1,7 @@
 package com.konradjurkowski.moviehub_server.core.service.email
 
 import com.konradjurkowski.moviehub_server.core.model.EmailRequest
+import org.slf4j.LoggerFactory
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.scheduling.annotation.Async
@@ -16,6 +17,8 @@ class EmailServiceImpl(
     private val mailSender: JavaMailSender,
 ) : EmailService {
 
+    private val logger = LoggerFactory.getLogger(javaClass)
+
     @Async
     override fun send(request: EmailRequest) {
         try {
@@ -26,7 +29,7 @@ class EmailServiceImpl(
             helper.setText(request.content ?: "", true)
             mailSender.send(message)
         } catch (e: Exception) {
-            throw IllegalStateException("Failed to send email", e)
+            logger.error("Failed to send email to ${request.recipient}", e)
         }
     }
 }

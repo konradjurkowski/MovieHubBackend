@@ -81,7 +81,7 @@ class VerificationTokenService(
 
     private fun verifyToken(user: User, type: VerificationTokenType, rawToken: String): Boolean {
         val verificationToken = repository.findByUserIdAndType(userId = user.id, type = type)
-            ?: throw ApiException(ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE)
+            ?: throw ApiException(type.invalidCodeError())
 
         if (verificationToken.expiresAt.isBefore(Instant.now()))
             throw ApiException(ErrorCode.VERIFICATION_CODE_EXPIRED)
@@ -105,6 +105,11 @@ class VerificationTokenService(
             VerificationTokenType.PASSWORD_RESET -> EmailRequestFactory.passwordReset(user, code)
         }
         emailService.send(request)
+    }
+
+    private fun VerificationTokenType.invalidCodeError() = when (this) {
+        VerificationTokenType.ACCOUNT_ACTIVATION -> ErrorCode.INVALID_ACTIVATION_ACCOUNT_CODE
+        VerificationTokenType.PASSWORD_RESET -> ErrorCode.INVALID_RESET_PASSWORD_CODE
     }
 
     private fun String.format() = this.chunked(3).joinToString(" ")

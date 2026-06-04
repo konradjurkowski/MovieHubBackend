@@ -5,4 +5,4 @@ data class SearchResponse<T>(
     val results: List<T>,
     val totalPages: Long,
     val totalResults: Long,
-) : ApiResponse
+)

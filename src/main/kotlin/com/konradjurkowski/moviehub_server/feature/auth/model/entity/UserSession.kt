@@ -26,8 +26,8 @@ class UserSession(
     val id: Long = 0,
     @Column(name = "user_id", nullable = false)
     val userId: Long,
-    @Column(name = "refresh_token", nullable = false, unique = true)
-    var refreshToken: String,
+    @Column(name = "refresh_token_hash", nullable = false, unique = true)
+    var refreshTokenHash: String,
     @Column(name = "device_info")
     val deviceInfo: String? = null,
     @Column(name = "ip_address")

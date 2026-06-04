@@ -1,3 +1,8 @@
 package com.konradjurkowski.moviehub_server.feature.auth.model.dto.logout
 
-data class LogoutRequest(val refreshToken: String)
+import jakarta.validation.constraints.NotBlank
+
+data class LogoutRequest(
+    @field:NotBlank
+    val refreshToken: String,
+)

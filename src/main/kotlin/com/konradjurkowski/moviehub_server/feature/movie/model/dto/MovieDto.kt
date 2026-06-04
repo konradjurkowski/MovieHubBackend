@@ -6,7 +6,6 @@ import com.konradjurkowski.moviehub_server.core.model.dto.media.ProductionCompan
 import com.konradjurkowski.moviehub_server.core.model.dto.media.ProductionCountryDto
 import com.konradjurkowski.moviehub_server.core.model.dto.media.SpokenLanguageDto
 import com.konradjurkowski.moviehub_server.core.model.dto.media.VideoDto
-import com.konradjurkowski.moviehub_server.core.model.dto.response.ApiResponse
 import com.konradjurkowski.moviehub_server.core.model.dto.media.GenreDto
 
 data class MovieDto(
@@ -32,4 +31,4 @@ data class MovieDto(
     val crew: List<CrewDto>? = null,
     val videos: List<VideoDto>? = null,
     val releaseDate: String? = null,
-) : ApiResponse
+)
