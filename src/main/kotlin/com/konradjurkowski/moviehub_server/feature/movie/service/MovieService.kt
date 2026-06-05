@@ -24,12 +24,12 @@ class MovieService(
 ) {
 
     fun addMovie(request: CreateMovieRequest): MovieDto {
-        if (movieRepository.existsByTmdbId(tmdbId = request.tmdbId)) {
+        if (movieRepository.existsById(request.tmdbId)) {
             throw ApiException(ErrorCode.MOVIE_ALREADY_EXISTS)
         }
 
         val movie = Movie(
-            tmdbId = request.tmdbId,
+            id = request.tmdbId,
             title = request.title,
             overview = request.overview,
             language = request.language,
@@ -41,8 +41,8 @@ class MovieService(
         return movieRepository.save(movie).toDto()
     }
 
-    fun getAddedTmdbIds(): AddedMovieIdsResponse {
-        val movieIds = movieRepository.findAllTmdbIdsAsList()
+    fun getAddedMovieIds(): AddedMovieIdsResponse {
+        val movieIds = movieRepository.findAllIds()
         return AddedMovieIdsResponse(movieIds)
     }
 
@@ -51,7 +51,7 @@ class MovieService(
         val pageable = PageRequest.of(
             pageNumber,
             20,
-            Sort.by(Sort.Direction.DESC, "id"),
+            Sort.by(Sort.Direction.DESC, "createdAt"),
         )
         val moviesPage = movieRepository.findAll(pageable)
         return SearchResponse(
@@ -80,10 +80,10 @@ class MovieService(
     }
 
     fun getMoviePreview(
-        tmdbId: Long,
+        id: Long,
         language: String? = null,
     ): Mono<MovieDto> {
-        return tmdbApi.getMovieById(id = tmdbId, language = language)
+        return tmdbApi.getMovieById(id = id, language = language)
             .map { it.toDto() }
     }
 }

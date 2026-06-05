@@ -3,25 +3,38 @@ package com.konradjurkowski.moviehub_server.core.data.api.dto
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.konradjurkowski.moviehub_server.core.utils.constants.TmdbConstants
-import com.konradjurkowski.moviehub_server.feature.movie.model.dto.MovieDto
+import com.konradjurkowski.moviehub_server.feature.series.model.dto.SeriesDto
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-data class TmdbMovie(
+data class TmdbSeries(
     val id: Long,
     val adult: Boolean,
     @param:JsonProperty("backdrop_path")
     val backdropPath: String? = null,
-    val budget: Long? = null,
+    @param:JsonProperty("created_by")
+    val createdBy: List<TmdbCreator>? = null,
+    @param:JsonProperty("episode_run_time")
+    val episodeRunTime: List<Long>? = null,
+    @param:JsonProperty("first_air_date")
+    val firstAirDate: String? = null,
     val genres: List<TmdbGenre>? = null,
     val homepage: String? = null,
-    @param:JsonProperty("imdb_id")
-    val imdbId: String? = null,
+    @param:JsonProperty("in_production")
+    val inProduction: Boolean? = null,
+    @param:JsonProperty("last_air_date")
+    val lastAirDate: String? = null,
+    val name: String,
+    val networks: List<TmdbProductionCompany>? = null,
+    @param:JsonProperty("number_of_episodes")
+    val numberOfEpisodes: Long? = null,
+    @param:JsonProperty("number_of_seasons")
+    val numberOfSeasons: Long? = null,
     @param:JsonProperty("origin_country")
     val originCountry: List<String>? = null,
     @param:JsonProperty("original_language")
     val originalLanguage: String,
-    @param:JsonProperty("original_title")
-    val originalTitle: String,
+    @param:JsonProperty("original_name")
+    val originalName: String,
     val overview: String,
     val popularity: Double,
     @param:JsonProperty("poster_path")
@@ -30,16 +43,11 @@ data class TmdbMovie(
     val productionCompanies: List<TmdbProductionCompany>? = null,
     @param:JsonProperty("production_countries")
     val productionCountries: List<TmdbProductionCountry>? = null,
-    @param:JsonProperty("release_date")
-    val releaseDate: String? = null,
-    val revenue: Long? = null,
-    val runtime: Long? = null,
     @param:JsonProperty("spoken_languages")
     val spokenLanguages: List<TmdbSpokenLanguage>? = null,
     val status: String? = null,
     val tagline: String? = null,
-    val title: String,
-    val video: Boolean,
+    val type: String? = null,
     @param:JsonProperty("vote_average")
     val voteAverage: Double,
     @param:JsonProperty("vote_count")
@@ -50,10 +58,10 @@ data class TmdbMovie(
     val watchProviders: TmdbWatchProviders? = null,
 )
 
-fun TmdbMovie.toDto(): MovieDto {
-    return MovieDto(
+fun TmdbSeries.toDto(): SeriesDto {
+    return SeriesDto(
         id = id,
-        title = title,
+        title = name,
         overview = overview,
         language = originalLanguage,
         adult = adult,
@@ -67,11 +75,17 @@ fun TmdbMovie.toDto(): MovieDto {
         spokenLanguages = spokenLanguages?.map { it.toDto() },
         status = status,
         tagline = tagline,
-        revenue = revenue,
-        runtime = runtime,
+        type = type,
+        numberOfSeasons = numberOfSeasons,
+        numberOfEpisodes = numberOfEpisodes,
+        episodeRunTime = episodeRunTime,
+        inProduction = inProduction,
+        createdBy = createdBy?.map { it.toDto() },
+        networks = networks?.map { it.toDto() },
         cast = credits?.cast?.map { it.toDto() },
         crew = credits?.crew?.map { it.toDto() },
         videos = videos?.results?.map { it.toDto() },
-        releaseDate = releaseDate,
+        releaseDate = firstAirDate,
+        lastAirDate = lastAirDate,
     )
 }

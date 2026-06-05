@@ -31,6 +31,9 @@ enum class ErrorCode(val status: HttpStatus) {
     // Movies error
     MOVIE_ALREADY_EXISTS(HttpStatus.CONFLICT),
 
+    // Series error
+    SERIES_ALREADY_EXISTS(HttpStatus.CONFLICT),
+
     // Validation
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST),
 

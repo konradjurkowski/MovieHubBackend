@@ -3,6 +3,7 @@ package com.konradjurkowski.moviehub_server.core.data.api
 import com.konradjurkowski.moviehub_server.core.data.properties.TmdbProperties
 import com.konradjurkowski.moviehub_server.core.data.api.dto.TmdbSearchResponse
 import com.konradjurkowski.moviehub_server.core.data.api.dto.TmdbMovie
+import com.konradjurkowski.moviehub_server.core.data.api.dto.TmdbSeries
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -70,4 +71,50 @@ class TmdbApi(properties: TmdbProperties) {
             }
             .retrieve()
             .bodyToMono(object : ParameterizedTypeReference<TmdbSearchResponse<TmdbMovie>>() {})
+
+    fun getSeriesById(
+        id: Long,
+        language: String? = null,
+    ): Mono<TmdbSeries> =
+        webClient.get()
+            .uri { uri ->
+                uri.path("/3/tv/$id")
+                    .queryParam("append_to_response", "videos,credits,watch/providers")
+                    .queryParam("language", language ?: "en-US")
+                    .build()
+            }
+            .retrieve()
+            .bodyToMono(TmdbSeries::class.java)
+
+    fun getPopularSeries(
+        page: Int = 1,
+        language: String? = null,
+    ): Mono<TmdbSearchResponse<TmdbSeries>> =
+        webClient.get()
+            .uri { uri ->
+                uri.path("/3/tv/popular")
+                    .queryParam("page", page)
+                    .queryParam("language", language ?: "en-US")
+                    .queryParam("include_adult", false)
+                    .build()
+            }
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<TmdbSearchResponse<TmdbSeries>>() {})
+
+    fun searchSeries(
+        query: String,
+        page: Int = 1,
+        language: String? = null,
+    ): Mono<TmdbSearchResponse<TmdbSeries>> =
+        webClient.get()
+            .uri { uri ->
+                uri.path("/3/search/tv")
+                    .queryParam("query", query)
+                    .queryParam("page", page)
+                    .queryParam("language", language ?: "en-US")
+                    .queryParam("include_adult", false)
+                    .build()
+            }
+            .retrieve()
+            .bodyToMono(object : ParameterizedTypeReference<TmdbSearchResponse<TmdbSeries>>() {})
 }

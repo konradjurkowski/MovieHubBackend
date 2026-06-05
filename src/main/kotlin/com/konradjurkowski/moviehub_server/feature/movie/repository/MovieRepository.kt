@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface MovieRepository : JpaRepository<Movie, Long> {
-    fun existsByTmdbId(tmdbId: Long): Boolean
-    @Query("SELECT m.tmdbId from Movie m")
-    fun findAllTmdbIdsAsList(): List<Long>
+    @Query("SELECT m.id from Movie m")
+    fun findAllIds(): List<Long>
 }

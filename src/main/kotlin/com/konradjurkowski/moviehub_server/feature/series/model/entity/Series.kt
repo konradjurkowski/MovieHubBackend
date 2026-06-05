@@ -1,6 +1,6 @@
-package com.konradjurkowski.moviehub_server.feature.movie.model.entity
+package com.konradjurkowski.moviehub_server.feature.series.model.entity
 
-import com.konradjurkowski.moviehub_server.feature.movie.model.dto.MovieDto
+import com.konradjurkowski.moviehub_server.feature.series.model.dto.SeriesDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -13,10 +13,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.Instant
 
 @Entity
-@Table(name = "movies")
+@Table(name = "series")
 @EntityListeners(AuditingEntityListener::class)
 @BatchSize(size = 50)
-class Movie(
+class Series(
     @Id
     val id: Long,
     @Column(nullable = false)
@@ -41,13 +41,13 @@ class Movie(
     val updatedAt: Instant = Instant.now(),
 ) {
     override fun equals(other: Any?): Boolean =
-        this === other || (other is Movie && id == other.id)
+        this === other || (other is Series && id == other.id)
 
     override fun hashCode(): Int = id.hashCode()
 }
 
-fun Movie.toDto(): MovieDto {
-    return MovieDto(
+fun Series.toDto(): SeriesDto {
+    return SeriesDto(
         id = id,
         title = title,
         overview = overview,
