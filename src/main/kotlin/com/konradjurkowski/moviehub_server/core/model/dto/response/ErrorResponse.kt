@@ -34,6 +34,16 @@ enum class ErrorCode(val status: HttpStatus) {
     // Series error
     SERIES_ALREADY_EXISTS(HttpStatus.CONFLICT),
 
+    // Comments
+    COMMENT_NOT_FOUND(HttpStatus.NOT_FOUND),
+    MEDIA_NOT_FOUND(HttpStatus.NOT_FOUND),
+    NOT_COMMENT_OWNER(HttpStatus.FORBIDDEN),
+
+    // Uploads
+    INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST),
+    FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE),
+    FILE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR),
+
     // Validation
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST),
 

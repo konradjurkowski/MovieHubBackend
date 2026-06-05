@@ -40,6 +40,7 @@ dependencies {
 
 	// Cloudinary
 	implementation("com.cloudinary:cloudinary-core:2.3.0")
+	implementation("com.cloudinary:cloudinary-http5:2.3.0")
 
 	// Netty
 	implementation("io.netty:netty-resolver-dns-classes-macos")
