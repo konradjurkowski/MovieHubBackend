@@ -168,7 +168,7 @@ class CommentService(
             .forEach { cloudinaryService.destroy(it) }
 
         commentLikeRepository.deleteByCommentIds(commentIds)
-        commentRepository.deleteRepliesByParentId(id)
+        commentRepository.deleteAll(replies)
         commentRepository.delete(comment)
     }
 

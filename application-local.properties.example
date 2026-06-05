@@ -1,0 +1,14 @@
+# JWT - wygeneruj: openssl rand -hex 32
+jwt.secret=7ed5f3d6e9d7ed597561905fb043cd5791afddee00c03e17d7f3a7d89252ee50
+
+# SMTP
+spring.mail.username=moviehubteam@gmail.com
+spring.mail.password=lqmm pfcl gjsr grpa
+
+# TMDB
+tmdb.token=eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJmZTQ3NTU4OTAxMWRiNzQxN2E4NDkwYTJmOGE0YTZmOCIsInN1YiI6IjYyZWEzMzc2NzY0Yjk5MDA2MTQyNjAwZiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.u3aAAJXoRGBzyzMXHpCzMnW_VfIo1NU6HrblSmuDnB0
+
+# Cloudinary
+cloudinary.cloud-name=
+cloudinary.api-key=
+cloudinary.api-secret=
